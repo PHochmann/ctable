@@ -4,7 +4,7 @@
 # ctable
 Library to print nicely formatted tables to stdout.
 Supports...
-* ...cells spanning over other multiple columns or rows
+* ...cells spanning over multiple columns or rows
 * ...ANSI color sequences
 * ...alignment of numbers under decimal dot
 
