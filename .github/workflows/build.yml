@@ -13,7 +13,5 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: make noreadline
-      run: make noreadline
-    - name: make tests
-      run: make tests
+    - name: make
+      run: make
