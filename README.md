@@ -12,6 +12,7 @@ Supports...
 Include ```src/table.h``` to use it. Invoke ```make``` to run tests.
 
 ## Example
+![Example Image](https://github.com/PhilippHochmann/ctable/example.png)
 
 ## Functions
 ### Data and printing
