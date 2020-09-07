@@ -8,6 +8,10 @@ Supports...
 * ...ANSI color sequences
 * ...alignment of numbers under decimal dot
 
+Currently not supported...
+* wchars
+* special chars like \t
+
 ## How to use it
 Include ```src/table.h``` to use it. Invoke ```make``` to run tests.
 
