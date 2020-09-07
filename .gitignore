@@ -1,0 +1,10 @@
+# Build artifacts
+bin/
+
+# Visual Studio configuration files
+.vscode
+
+# Valgrind files
+vgcore*
+massif*
+callgrind*
