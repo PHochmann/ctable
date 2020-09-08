@@ -13,6 +13,7 @@ Include ```src/table.h``` to use it. Invoke ```make``` to run tests.
 
 ## Example
 ![Example Image](https://github.com/PhilippHochmann/ctable/example.png)
+![Example Image](https://github.com/PhilippHochmann/ctable/example2.png)
 
 ## Functions
 ### Data and printing
