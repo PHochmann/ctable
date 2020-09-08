@@ -2,20 +2,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "string_util.h"
 #include "table.h"
 #include "printing.h"
 #include "constraint.h"
 
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define STRBUILDER_STARTSIZE 5
 
 void add_cell_internal(Table *table, char *text, bool needs_free)
 {
-    if (table->curr_col >= MAX_COLS) return;
-
+    assert(table != NULL);
+    assert(table->curr_col < MAX_COLS);
     struct Cell *cell = &table->curr_row->cells[table->curr_col];
-    if (cell->is_set) return;
+    assert(!cell->is_set);
 
     cell->is_set = true;
     cell->text_needs_free = needs_free;
@@ -145,7 +147,9 @@ void free_table(Table *table)
 
 void set_position(Table *table, size_t x, size_t y)
 {
-    if (x >= MAX_COLS) return;
+    assert(table != NULL);
+    assert(x < MAX_COLS);
+
     table->curr_col = x;
     if (y < table->num_rows)
     {
@@ -165,7 +169,7 @@ Summary: Next inserted cell will be inserted at first unset column of next row.
 */
 void next_row(Table *table)
 {
-    if (table == NULL) return;
+    assert(table != NULL);
 
     // Extend linked list if necessary
     table->curr_col = 0;
@@ -247,6 +251,9 @@ Summary: Sets default alignment of columns
 */
 void set_default_alignments(Table *table, size_t num_alignments, TextAlignment *alignments)
 {
+    assert(table != NULL);
+    assert(num_alignments < MAX_COLS);
+
     for (size_t i = 0; i < num_alignments; i++)
     {
         table->alignments[i] = alignments[i];
@@ -258,6 +265,7 @@ Summary: Overrides alignment of current cell
 */
 void override_alignment(Table *table, TextAlignment alignment)
 {
+    assert(table != NULL);
     override_alignment_internal(get_curr_cell(table), alignment);
 }
 
@@ -266,6 +274,7 @@ Summary: Overrides alignment of all cells in current row
 */
 void override_alignment_of_row(Table *table, TextAlignment alignment)
 {
+    assert(table != NULL);
     for (size_t i = 0; i < MAX_COLS; i++)
     {
         override_alignment_internal(&table->curr_row->cells[i], alignment);
@@ -274,6 +283,8 @@ void override_alignment_of_row(Table *table, TextAlignment alignment)
 
 void set_hline(Table *table, BorderStyle style)
 {
+    assert(table != NULL);
+
     if (table->curr_row->border_above != BORDER_NONE)
     {
         table->curr_row->border_above_counter--;
@@ -287,7 +298,8 @@ void set_hline(Table *table, BorderStyle style)
 
 void set_vline(Table *table, size_t index, BorderStyle style)
 {
-    if (index >= MAX_COLS) return;
+    assert(table != NULL);
+    assert (index < MAX_COLS);
 
     if (table->num_cols <= index)
     {
@@ -307,6 +319,8 @@ void set_vline(Table *table, size_t index, BorderStyle style)
 
 void make_boxed(Table *table, BorderStyle style)
 {
+    assert(table != NULL);
+
     set_position(table, 0, 0);
     set_vline(table, 0, style);
     set_hline(table, style);
@@ -317,6 +331,8 @@ void make_boxed(Table *table, BorderStyle style)
 
 void override_left_border(Table *table, BorderStyle style)
 {
+    assert(table != NULL);
+
     if (get_curr_cell(table)->override_border_left && get_curr_cell(table)->border_left != BORDER_NONE)
     {
         table->border_left_counters[table->curr_col]--;
@@ -332,6 +348,8 @@ void override_left_border(Table *table, BorderStyle style)
 
 void override_above_border(Table *table, BorderStyle style)
 {
+    assert(table != NULL);
+
     if (get_curr_cell(table)->override_border_above && get_curr_cell(table)->border_above != BORDER_NONE)
     {
         table->curr_row->border_above_counter--;
@@ -351,9 +369,15 @@ Summary: Changes span of current cell
 */
 void set_span(Table *table, size_t span_x, size_t span_y)
 {
+    assert(table != NULL);
+    assert(span_x != 0);
+    assert(span_y != 0);
+    assert(table->curr_col + span_x <= MAX_COLS);
+
     struct Cell *cell = &table->curr_row->cells[table->curr_col];
     cell->span_x = span_x;
     cell->span_y = span_y;
+    table->num_cols = MAX(table->curr_col + span_x, table->num_cols);
 
     // Inserts rows and sets child cells
     struct Row *row = table->curr_row;
@@ -402,6 +426,8 @@ void set_span(Table *table, size_t span_x, size_t span_y)
 
 void set_all_vlines(Table *table, BorderStyle style)
 {
+    assert(table != NULL);
+
     size_t cc = table->curr_col;
     for (size_t i = 1; i < table->num_cols; i++)
     {

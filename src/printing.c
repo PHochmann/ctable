@@ -26,7 +26,6 @@ static size_t VLINE_INDEX = 10;
 // Index encodes whether a border intersects (0: no intersection, 1: intersection), clockwise
 static size_t BORDER_LOOKUP[16] = { 11, 11, 11, 6, 11, 10, 0, 3, 11, 8, 9, 7, 2, 5, 1, 4 };
 
-/*
 void print_debug(Table *table)
 {
     size_t col_widths[table->num_cols];
@@ -39,7 +38,6 @@ void print_debug(Table *table)
     for (size_t i = 0; i < table->num_cols; i++) printf("%zu ", col_widths[i]);
     printf("\n");
 }
-*/
 
 void print_repeated(char *string, size_t times)
 {
@@ -368,7 +366,10 @@ void print_table_internal(Table *table)
     size_t row_heights[table->num_rows];
     get_dimensions(table, col_widths, row_heights);
     override_superfluous_lines(table, col_widths[table->num_cols - 1], row_heights[table->num_rows - 1]);
-    //print_debug(table);
+    
+    #ifdef DEBUG
+    print_debug(table);
+    #endif
 
     size_t line_indices[table->num_cols];
     for (size_t i = 0; i < table->num_cols; i++) line_indices[i] = 0;

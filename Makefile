@@ -2,7 +2,7 @@ TARGET_EXEC := test
 BUILD_DIR   := ./bin
 SRC_DIRS    := ./src ./tests
 
-CFLAGS      := -MMD -MP -std=c99 -Wall -Wextra -Werror -pedantic -g3 -O0
+CFLAGS      := -MMD -MP -DDEBUG -std=c99 -Wall -Wextra -Werror -pedantic -g3 -O0
 LDFLAGS     := 
 
 SRCS := $(shell find $(SRC_DIRS) -name *.c)
@@ -13,7 +13,7 @@ INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 all: $(BUILD_DIR)/$(TARGET_EXEC)
-	./$(BUILD_DIR)/$(TARGET_EXEC)
+	@$(BUILD_DIR)/$(TARGET_EXEC)
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 	@$(CC) $(OBJS) -o $@
@@ -22,7 +22,7 @@ $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 $(BUILD_DIR)/%.c.o: %.c
 	@mkdir -p $(dir $@)
 	echo Compiling $<
-	$(CC) $(INC_FLAGS) $(CFLAGS) -c $< -o $@
+	@$(CC) $(INC_FLAGS) $(CFLAGS) -c $< -o $@
 
 .PHONY: clean
 clean:
