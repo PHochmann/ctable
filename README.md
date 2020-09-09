@@ -1,6 +1,11 @@
 ![build](https://github.com/PhilippHochmann/ctable/workflows/build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 
+### To do
+* Write documentation
+* More assertions and checks (bad calls should not lead to segfaults)
+* Remove MAX_COLS restriction (currently 11)
+
 # ctable
 Library to print nicely formatted tables to stdout.
 Supports...
@@ -14,6 +19,14 @@ Currently not supported...
 
 ## How to use it
 Include ```src/table.h``` to use it. Invoke ```make``` to run tests.
+
+First, get a new table with ```get_empty_table()```.
+Its current column and current row are set to 0.
+Cell insertions into the table always occur at the current column and current row.
+After a cell insertion, the current column advances.
+
+When styling a cell, call a setting-changing function *before* the cell insertion.
+The cell insertion will mov
 
 ## Example
 ![Example Image](https://raw.githubusercontent.com/PhilippHochmann/ctable/master/example.png)
