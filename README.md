@@ -85,14 +85,35 @@ Adds multiple cells with contents specified by a memory-contiguous 2D-Array.
 Insertion begins at current position, next position of insertion will be right to set cells in the same row.
 Strings will not be copied, so take care that pointers within the array are valid when the table is printed!
 
-## Settings
+## Cell styling
+These functions style the cell that is added by next insertion (in the following called *current* cell). Already set cells can not be styled any more.
+
 ### void set_default_alignments(Table \*table, size_t num_alignments, TextAlignment \*alignments)
+Sets the default text alignment for each column.
+
 ### void override_alignment(Table \*table, TextAlignment alignment)
+Overrides text alignment for current cell.
+
 ### void override_alignment_of_row(Table \*table, TextAlignment alignment)
+Overrides text alignment for all cells of current row.
+
 ### void set_hline(Table \*table, BorderStyle style)
+Inserts a horizontal line above the current row.
+
 ### void set_vline(Table \*table, size_t index, BorderStyle style)
+Inserts a vertical line left to current column,
+
 ### void make_boxed(Table \*table, BorderStyle style)
+Encloses the table in its current state by a box. Make sure to call ```next_row``` after last row to include it in box.
+
 ### void set_all_vlines(Table \*table, BorderStyle style)
+Inserts vertical lines between all currently non-empty columns.
+
 ### void override_left_border(Table \*table, BorderStyle style)
+Sets the left border of the current cell independently of default value for current column.
+
 ### void override_above_border(Table \*table, BorderStyle style)
+Sets the above border for the current cell independently of default value for current row.
+
 ### void set_span(Table \*table, size_t span_x, size_t span_y)
+Sets span for current cell. ```span_x``` denotes the number of columns to span over, ```span_y``` denotes the number of rows to span over.
