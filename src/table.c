@@ -8,6 +8,7 @@
 #include "table.h"
 #include "printing.h"
 #include "constraint.h"
+#include "alloc_wrappers.h"
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define STRBUILDER_STARTSIZE 5
@@ -42,7 +43,7 @@ void override_alignment_internal(struct Cell *cell, TextAlignment alignment)
 
 struct Row *malloc_row(size_t y)
 {
-    struct Row *res = calloc(1, sizeof(struct Row));
+    struct Row *res = calloc_wrapper(1, sizeof(struct Row));
     if (res == NULL) return NULL;
     for (size_t i = 0; i < MAX_COLS; i++)
     {
