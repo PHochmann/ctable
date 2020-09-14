@@ -89,36 +89,23 @@ bool table_test(__attribute__((unused)) Vector *error_builder)
 
     // Case 4
     Table t4 = get_empty_table();
-    for (size_t i = 1; i < MAX_COLS - 2; i++)
+    for (size_t i = 1; i < MAX_COLS - 1; i++)
     {
         set_span(&t4, i, 1);
         add_cell_fmt(&t4, " x ");
-        set_span(&t4, MAX_COLS - i - 2, 1);
+        set_span(&t4, MAX_COLS - i - 1, 1);
         add_cell_fmt(&t4, " x ");
         next_row(&t4);
         set_hline(&t4, BORDER_SINGLE);
     }
 
-    for (size_t i = 1; i < MAX_COLS; i++)
+    for (size_t i = 0; i < MAX_COLS / 2; i++)
     {
-        for (size_t j = 1; j < MAX_COLS - 1; j++)
-        {
-            if (i == 1)
-            {
-                set_span(&t4, 1, j);
-                add_cell_fmt(&t4, " x ");
-            }
-
-            if (i == j + 1)
-            {
-                set_span(&t4, 1, MAX_COLS - i);
-                add_cell_fmt(&t4, " x ");
-            }
-        }
-        next_row(&t4);
-        set_hline(&t4, BORDER_SINGLE);
+        set_span(&t4, 2, 1);
+        add_cell_fmt(&t4, " x ");
     }
 
+    next_row(&t4);
     set_all_vlines(&t4, BORDER_SINGLE);
     make_boxed(&t4, BORDER_SINGLE);
     print_table(&t4);

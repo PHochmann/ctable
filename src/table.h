@@ -72,6 +72,7 @@ typedef struct
 // Data and printing
 Table get_empty_table();
 void print_table(Table *table);
+void fprint_table(Table *table, FILE *stream);
 void free_table(Table *table);
 
 // Control

@@ -39,12 +39,12 @@ void print_debug(Table *table)
     printf("\n");
 }
 
-void print_repeated(char *string, size_t times)
+void print_repeated(char *string, size_t times, FILE *stream)
 {
-    for (size_t i = 0; i < times; i++) printf("%s", string);
+    for (size_t i = 0; i < times; i++) fprintf(stream, "%s", string);
 }
 
-void print_text(struct Cell *cell, TextAlignment default_align, size_t line_index, int total_length)
+void print_text(struct Cell *cell, TextAlignment default_align, size_t line_index, int total_length, FILE *stream)
 {
     if (cell->parent != NULL)
     {
@@ -56,7 +56,7 @@ void print_text(struct Cell *cell, TextAlignment default_align, size_t line_inde
 
     if (string == NULL)
     {
-        printf("%*s", total_length, "");
+        fprintf(stream, "%*s", total_length, "");
         return;
     }
 
@@ -69,18 +69,18 @@ void print_text(struct Cell *cell, TextAlignment default_align, size_t line_inde
     {
         case ALIGN_LEFT:
         {
-            printf("%-*.*s", adjusted_total_len, bytes, string);
+            fprintf(stream, "%-*.*s", adjusted_total_len, bytes, string);
             break;
         }
         case ALIGN_RIGHT:
         {
-            printf("%*.*s", adjusted_total_len, bytes, string);
+            fprintf(stream, "%*.*s", adjusted_total_len, bytes, string);
             break;
         }
         case ALIGN_CENTER:
         {
             int padding = (total_length - string_length) / 2;
-            printf("%*s%.*s%*s", padding, "", bytes, string,
+            fprintf(stream, "%*s%.*s%*s", padding, "", bytes, string,
                 (total_length - string_length) % 2 == 0 ? padding : padding + 1, "");
             break;
         }
@@ -89,11 +89,11 @@ void print_text(struct Cell *cell, TextAlignment default_align, size_t line_inde
             int num_inserted = cell->zeros_needed;
             if (cell->dot_needed) num_inserted++;
 
-            print_repeated(" ", total_length - num_inserted - string_length);
-            printf("%.*s", (int)cell->zero_position, string);
-            if (cell->dot_needed) printf("%c", DECIMAL_SEPARATOR);
-            print_repeated("0", cell->zeros_needed);
-            printf("%.*s", (int)(bytes - cell->zero_position), string + cell->zero_position);
+            print_repeated(" ", total_length - num_inserted - string_length, stream);
+            fprintf(stream, "%.*s", (int)cell->zero_position, string);
+            if (cell->dot_needed) fprintf(stream, "%c", DECIMAL_SEPARATOR);
+            print_repeated("0", cell->zeros_needed, stream);
+            fprintf(stream, "%.*s", (int)(bytes - cell->zero_position), string + cell->zero_position);
             break;
         }
     }
@@ -217,7 +217,8 @@ void count_styles(BorderStyle style, size_t *out_num_single, size_t *out_num_dou
 
 void print_intersection_char(BorderStyle default_right_border_left,
     BorderStyle default_below_border_above,
-    struct Cell *right_above, struct Cell *left_below, struct Cell *right_below)
+    struct Cell *right_above, struct Cell *left_below, struct Cell *right_below,
+    FILE *stream)
 {
     size_t num_single = 0;
     size_t num_double = 0;
@@ -270,11 +271,11 @@ void print_intersection_char(BorderStyle default_right_border_left,
 
     if (num_double > num_single)
     {
-        printf("%s", BORDER_MATRIX_DOUBLE[BORDER_LOOKUP[index]]);
+        fprintf(stream, "%s", BORDER_MATRIX_DOUBLE[BORDER_LOOKUP[index]]);
     }
     else
     {
-        printf("%s", BORDER_MATRIX_SINGLE[BORDER_LOOKUP[index]]);
+        fprintf(stream, "%s", BORDER_MATRIX_SINGLE[BORDER_LOOKUP[index]]);
     }
 }
 
@@ -283,7 +284,8 @@ void print_complete_line(Table *table,
     struct Row *above_row,
     struct Row *below_row,
     size_t *line_indices,
-    size_t *col_widths)
+    size_t *col_widths,
+    FILE *stream)
 {
     for (size_t i = 0; i < table->num_cols; i++)
     {
@@ -294,7 +296,7 @@ void print_complete_line(Table *table,
                 below_row->border_above,
                 above_row != NULL ? &above_row->cells[i] : NULL,
                 i > 0 ? &below_row->cells[i - 1] : NULL,
-                &below_row->cells[i]);
+                &below_row->cells[i], stream);
         }
 
         // Print hline in between intersections (or content when cell has span_y > 1)
@@ -303,13 +305,13 @@ void print_complete_line(Table *table,
             switch (get_border_above(below_row->border_above, &below_row->cells[i]))
             {
                 case BORDER_SINGLE:
-                    print_repeated(BORDER_MATRIX_SINGLE[HLINE_INDEX], col_widths[i]);
+                    print_repeated(BORDER_MATRIX_SINGLE[HLINE_INDEX], col_widths[i], stream);
                     break;
                 case BORDER_DOUBLE:
-                    print_repeated(BORDER_MATRIX_DOUBLE[HLINE_INDEX], col_widths[i]);
+                    print_repeated(BORDER_MATRIX_DOUBLE[HLINE_INDEX], col_widths[i], stream);
                     break;
                 case BORDER_NONE:
-                    print_repeated(" ", col_widths[i]);
+                    print_repeated(" ", col_widths[i], stream);
             }
         }
         else
@@ -318,12 +320,13 @@ void print_complete_line(Table *table,
             print_text(parent,
                 table->alignments[i],
                 line_indices[i],
-                get_total_width(table, col_widths, i, parent->span_x));
+                get_total_width(table, col_widths, i, parent->span_x),
+                stream);
             line_indices[i]++;
             i += parent->span_x - 1;
         }
     }
-    printf("\n");
+    fprintf(stream, "\n");
 }
 
 void override_superfluous_lines(Table *table, size_t last_col_width, size_t last_row_height)
@@ -360,7 +363,7 @@ void override_superfluous_lines(Table *table, size_t last_col_width, size_t last
     }
 }
 
-void print_table_internal(Table *table)
+void fprint_table_internal(Table *table, FILE *stream)
 {
     size_t col_widths[table->num_cols];
     size_t row_heights[table->num_rows];
@@ -382,7 +385,7 @@ void print_table_internal(Table *table)
     {
         if (curr_row->border_above_counter > 0)
         {
-            print_complete_line(table, prev_row, curr_row, line_indices, col_widths);
+            print_complete_line(table, prev_row, curr_row, line_indices, col_widths, stream);
         }
 
         // Reset line indices for newly beginning cells, don't reset them for cells that are children spanning from above
@@ -404,25 +407,26 @@ void print_table_internal(Table *table)
                     switch (get_border_left(table->borders_left[k], &curr_row->cells[k]))
                     {
                         case BORDER_SINGLE:
-                            printf("%s", BORDER_MATRIX_SINGLE[VLINE_INDEX]);
+                            fprintf(stream, "%s", BORDER_MATRIX_SINGLE[VLINE_INDEX]);
                             break;
                         case BORDER_DOUBLE:
-                            printf("%s", BORDER_MATRIX_DOUBLE[VLINE_INDEX]);
+                            fprintf(stream, "%s", BORDER_MATRIX_DOUBLE[VLINE_INDEX]);
                             break;
                         case BORDER_NONE:
-                            printf(" ");
+                            fprintf(stream, " ");
                     }
                 }
 
                 print_text(&curr_row->cells[k],
                     table->alignments[k],
                     line_indices[k],
-                    get_total_width(table, col_widths, k, get_span_x(&curr_row->cells[k])));
+                    get_total_width(table, col_widths, k, get_span_x(&curr_row->cells[k])),
+                    stream);
                 
                 line_indices[k]++;
             }
 
-            printf("\n");
+            fprintf(stream, "\n");
         }
 
         row_index++;

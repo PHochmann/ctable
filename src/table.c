@@ -127,7 +127,12 @@ Summary: Prints table to stdout
 */
 void print_table(Table *table)
 {
-    print_table_internal(table);
+    fprint_table_internal(table, stdout);
+}
+
+void fprint_table(Table *table, FILE *stream)
+{
+    fprint_table_internal(table, stream);
 }
 
 /*
