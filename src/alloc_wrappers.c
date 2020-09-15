@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "alloc_wrappers.h"
 
-#define ERROR_MESSAGE "Out of heap memory - terminating\n"
+#define ERROR_MESSAGE "[ctable] Out of heap memory - terminating\n"
 
 void print_error_and_exit()
 {

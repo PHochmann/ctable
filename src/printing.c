@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 #include "string_util.h"
 #include "printing.h"
@@ -251,6 +252,7 @@ void print_intersection_char(BorderStyle default_right_border_left,
         count_styles(left, &num_single, &num_double);
     }
 
+    // Encode intersecting lines into a 4-Bit number to use as an index to see which char needs to be printed
     size_t index = 0;
     if (above != BORDER_NONE)
     {
@@ -365,6 +367,9 @@ void override_superfluous_lines(Table *table, size_t last_col_width, size_t last
 
 void fprint_table_internal(Table *table, FILE *stream)
 {
+    assert(table != NULL);
+    assert(stream != NULL);
+
     size_t col_widths[table->num_cols];
     size_t row_heights[table->num_rows];
     get_dimensions(table, col_widths, row_heights);

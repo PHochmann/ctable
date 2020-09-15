@@ -142,6 +142,8 @@ Summary: Frees all rows and content strings in cells created by add_cell_fmt.
 */
 void free_table(Table *table)
 {
+    assert(table != NULL);
+
     struct Row *row = table->first_row;
     while (row != NULL)
     {
@@ -221,6 +223,8 @@ Summary: Adds next cell and maintains buffer of text.
 */
 void add_cell_fmt(Table *table, char *fmt, ...)
 {
+    assert(fmt != NULL);
+
     va_list args;
     va_start(args, fmt);
     add_cell_vfmt(table, fmt, args);
@@ -229,6 +233,8 @@ void add_cell_fmt(Table *table, char *fmt, ...)
 
 void add_cell_vfmt(Table *table, char *fmt, va_list args)
 {
+    assert(fmt != NULL);
+
     StringBuilder builder = strbuilder_create(STRBUILDER_STARTSIZE);
     vstrbuilder_append(&builder, fmt, args);
     add_cell_internal(table, builder.buffer, true);
@@ -241,7 +247,9 @@ Summary: Puts contents of memory-contiguous 2D array into table cell by cell.
 */
 void add_cells_from_array(Table *table, size_t width, size_t height, char **array)
 {
-    if (table->curr_col + width > MAX_COLS) return;
+    assert(table != NULL);
+    assert(table->curr_col + width <= MAX_COLS);
+
     for (size_t i = 0; i < height; i++)
     {
         for (size_t j = 0; j < width; j++)
@@ -258,7 +266,7 @@ Summary: Sets default alignment of columns
 void set_default_alignments(Table *table, size_t num_alignments, TextAlignment *alignments)
 {
     assert(table != NULL);
-    assert(num_alignments < MAX_COLS);
+    assert(num_alignments <= MAX_COLS);
 
     for (size_t i = 0; i < num_alignments; i++)
     {
@@ -379,8 +387,10 @@ void set_span(Table *table, size_t span_x, size_t span_y)
     assert(span_x != 0);
     assert(span_y != 0);
     assert(table->curr_col + span_x <= MAX_COLS);
-
     struct Cell *cell = &table->curr_row->cells[table->curr_col];
+    assert(cell->span_x == 1);
+    assert(cell->span_y == 1);
+
     cell->span_x = span_x;
     cell->span_y = span_y;
     table->num_cols = MAX(table->curr_col + span_x, table->num_cols);
