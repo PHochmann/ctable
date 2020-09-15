@@ -9,13 +9,14 @@
 # ctable
 Library to print nicely formatted tables to stdout.
 Supports...
-* cells spanning over multiple columns or rows
+* Cells spanning over multiple columns or rows
 * ANSI color sequences
-* alignment of numbers under decimal dot
+* Newlines in cell content
+* Alignment of numbers under decimal dot
 
 Currently not supported...
 * wchars
-* special chars like ```\t```
+* Special chars like ```\t```
 
 ## How to use it
 Include ```src/table.h``` to use it. Invoke ```make``` to run tests.
@@ -39,7 +40,7 @@ The following functions are used to obtain a new table, print it, and free it af
 
 ### Table get_empty_table()
 Returns a new table without any lines or set cells. All cells are styled to be left-aligned.
-Insertion begins at the upper left corner. You don't need to look into a table directly, it suffices to use the following functions to manipulate it.
+Insertion begins at the upper left corner. You don't need to look into a ```Table``` directly, it suffices to use the following functions to manipulate it.
 
 ### void print_table(Table \*table)
 Prints a table to stdout. This function is equivalent to ```fprint_table(table, stdout)```.
