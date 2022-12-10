@@ -3,6 +3,7 @@
 
 #include "test_table.h"
 #include "../src/table.h"
+#include "../src/vector.h"
 
 #define NUM_CASES 4
 
@@ -22,7 +23,7 @@ char *arrayA[4][4] = {
 bool table_test(__attribute__((unused)) Vector *error_builder)
 {
     // Case 1
-    Table t1 = get_empty_table();
+    Table *t1 = get_empty_table();
     set_default_alignments(&t1, 5, (TextAlignment[]){ ALIGN_LEFT, ALIGN_NUMBERS, ALIGN_RIGHT, ALIGN_CENTER, ALIGN_CENTER });
     add_cells_from_array(&t1, 4, 4, (char**)arrayA);
     set_position(&t1, 0, 0);
