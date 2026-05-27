@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug ctable",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/debug/ctable",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "make debug"
+    }
+  ]
+}

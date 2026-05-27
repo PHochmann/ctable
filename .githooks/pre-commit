@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+set -eu
+
+printf '%s\n' 'Running formatter (make format)...'
+make format
+
+if git diff --quiet --exit-code; then
+	printf '%s\n' 'Formatting already clean.'
+	exit 0
+fi
+
+printf '%s\n' 'Formatting changes were applied. Commit aborted; please review, stage, and commit again.'
+exit 1
